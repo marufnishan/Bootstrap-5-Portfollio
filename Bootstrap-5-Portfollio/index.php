@@ -1,23 +1,62 @@
 <?php
     include("connection.php");
-
-    if($_SERVER['REQUEST_METHOD']=="POST"){
+    if(isset($_POST['submit'])){
 
         $name = $_POST['name'];
         $email = $_POST['email'];
         $phone = $_POST['phone'];
-        $subject = $_POST['subject'];
+        $subj = $_POST['subject'];
         $msg = $_POST['msg'];
 
-        if(!empty($name) && !empty($email) && !empty($phone) && !empty($subject) && !empty($msg) )
+        if(!empty($name) && !empty($email) && !empty($phone) && !empty($subj) && !empty($msg) )
         {
-            $query = "insert into contact_us (name,email,phone,subject,msg) values ('$name','$email','$phone','$subject','$msg')";
+            $query = "insert into contact_us (name,email,phone,subject,msg) values ('$name','$email','$phone','$subj','$msg')";
 
-            $data=mysqli_query($con,$query);
+            mysqli_query($con,$query);
+            /* Mail Code Start */
+            $to = "mdmarufnishan@gmail.com";
+            $subject = $subj;
+            
+            $message = "
+            <html>
+            <head>
+            <title>portfolio.nishanbd.com</title>
+            </head>
+            <body>
+            <p>Message : $msg</p>
+            <table style='border-collapse: 20px;padding:5px;'>
+                <tr>
+                <th style='padding:5px;font-size: large;border-bottom: 2px solid black;'>Name</th>
+                <th style='padding:5px;font-size: large;border-bottom: 2px solid black;'>Email</th>
+                <th style='padding:5px;font-size: large;border-bottom: 2px solid black;'>Phone</th>
+                </tr>
+                <tr>
+                <td style='border-radius: 10px;background-color: aquamarine;color: rgb(185, 50, 50);border-collapse: collapse;font-size: large;padding:5px;'>$name</td>
+                <td style='border-radius: 10px;background-color: aquamarine;color: rgb(185, 50, 50);border-collapse: collapse;font-size: large;padding:5px;'>$email</td>
+                <td style='border-radius: 10px;background-color: aquamarine;color: rgb(185, 50, 50);border-collapse: collapse;font-size: large;padding:5px;'>$phone</td>
+                </tr>
+            </table>
+            </body>
+            </html>
+            ";
+            $headers = "MIME-Version: 1.0" . "\r\n";
+            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+            
+            $headers .= 'From: <mdmarufnishan@nishanbd.com>' . "\r\n";
+            $headers .= 'Cc: mdnishan102@gmail.com' . "\r\n";
+            
+            mail($to,$subject,$message,$headers);
+            /* Mail Code End */
+            
         }else
         {
             echo("Please Enter Some Valid information");
         }
+
+        header("Location: index.php");
+        die();
+        
+        
     }
 
 ?>
@@ -773,38 +812,38 @@
                     </div>
                     <div class="col-md-7">
                         <div class="contact-form">
-                            <form action="<?=$_SERVER['PHP_SELF'];?>" method="post">
+                            <form action="/" method="post">
                                 <div class="row mb-4 d-flex">
                                     <div class="col-lg-6 mb-4">
                                         <input type="text" name="name" placeholder="Your Name"
-                                            class="form-control form-control-lg fs-6 border-0 shadow-sm">
+                                            class="form-control form-control-lg fs-6 border-0 shadow-sm" required>
                                     </div>
                                     <div class="col-lg-6 mb-4">
                                         <input type="text" name="email" placeholder="Your Email"
-                                            class="form-control form-control-lg fs-6 border-0 shadow-sm">
+                                            class="form-control form-control-lg fs-6 border-0 shadow-sm" required>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 mb-4">
-                                        <input type="text" name="phone" placeholder="Phone ( 10 Degit )..."
-                                            class="form-control form-control-lg fs-6 border-0 shadow-sm">
+                                        <input type="text" name="phone" placeholder="Phone "
+                                            class="form-control form-control-lg fs-6 border-0 shadow-sm" required>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 mb-4">
                                         <input type="text" name="subject" placeholder="Subject"
-                                            class="form-control form-control-lg fs-6 border-0 shadow-sm">
+                                            class="form-control form-control-lg fs-6 border-0 shadow-sm" required>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12 mb-4">
                                         <textarea rows="5" name="msg" placeholder="Your Message"
-                                            class="form-control form-control-lg fs-6 border-0 shadow-sm"></textarea>
+                                            class="form-control form-control-lg fs-6 border-0 shadow-sm" required></textarea>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <button type="submit" class="btn btn-success px-3">Send Message</button>
+                                        <button type="submit" name="submit" class="btn btn-success px-3">Send Message</button>
                                     </div>
                                 </div>
                             </form>
